@@ -1,7 +1,7 @@
 # BadWeaponForYou Plugin b3 for Urban Terror
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.3.1'
+__version__ = '1.4'
 
 import b3, threading, thread, re
 import b3.events
@@ -85,6 +85,12 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
 
     _adminPlugin = None
     _listplayersgear = []
+    _bwfyminlevel = 60
+    _glminlevel = 20
+    _lbwfyminlevel = 20
+    _mlbwfyminlevel = 1
+    _protectlevel = 20
+    _wgminlevel = 20
 
     def onStartup(self):
 
@@ -95,22 +101,48 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             self.error('Could not find admin plugin')
             return False
         
-        self._bwfyminlevel = self.config.getint('settings', 'bwfyminlevel')
-        self._glminlevel = self.config.getint('settings', 'glminlevel')
-        self._lbwfyminlevel = self.config.getint('settings', 'lbwfyminlevel')
-        self._mlbwfyminlevel = self.config.getint('settings', 'mlbwfyminlevel')
-        self._protectlevel = self.config.getint('settings', 'protectlevel')
-        self._wgminlevel = self.config.getint('settings', 'wgminlevel')        
         self._adminPlugin.registerCommand(self, 'bwfy',self._bwfyminlevel, self.cmd_bwfy)
         self._adminPlugin.registerCommand(self, 'listgear',self._glminlevel, self.cmd_listgear)
         self._adminPlugin.registerCommand(self, 'listbwfy',self._lbwfyminlevel, self.cmd_listbwfy)
         self._adminPlugin.registerCommand(self, 'mylistbwfy',self._mlbwfyminlevel, self.cmd_mylistbwfy)
         self._adminPlugin.registerCommand(self, 'whogear',self._wgminlevel, self.cmd_whogear)
+
         self.registerEvent(b3.events.EVT_CLIENT_GEAR_CHANGE)
         self.registerEvent(b3.events.EVT_CLIENT_NAME_CHANGE)
         self.registerEvent(b3.events.EVT_CLIENT_TEAM_CHANGE)
         self.registerEvent(b3.events.EVT_GAME_ROUND_START)
         self.registerEvent(b3.events.EVT_GAME_MAP_CHANGE)
+
+    def onLoadConfig(self):
+
+        try:
+            self._bwfyminlevel = self.config.getint('settings', 'bwfyminlevel')
+        except Exception, err:    
+            self.warning("bwfyminlevel using default value. %s" % (err))
+
+        try:
+            self._glminlevel = self.config.getint('settings', 'glminlevel')
+        except Exception, err: 
+            self.warning("glminlevel using default value. %s" % (err))
+
+        try:
+            self._lbwfyminlevel = self.config.getint('settings', 'lbwfyminlevel')
+        except Exception, err:
+            self.warning("lbwfyminlevel using default value. %s" % (err))
+
+        try:
+            self._mlbwfyminlevel = self.config.getint('settings', 'mlbwfyminlevel')
+        except Exception, err:
+            self.warning("mlbwfyminlevel using default value. %s" % (err))
+        try:
+            self._protectlevel = self.config.getint('settings', 'protectlevel')
+        except Exception, err:
+            self.warning("protectlevel using default value. %s" % (err))
+
+        try:
+            self._wgminlevel = self.config.getint('settings', 'wgminlevel')        
+        except Exception, err:
+            self.warning("wgminlevel using default value. %s" % (err))
 
     def onEvent(self,  event):       
         
