@@ -2,7 +2,7 @@
 # Plugin for B3 (www.bigbrotherbot.com)
 # www.ptitbigorneau.fr
 
-badweaponforyou plugin (v1.4) for B3
+badweaponforyou plugin (v1.5) for B3
 
 Installation:
 

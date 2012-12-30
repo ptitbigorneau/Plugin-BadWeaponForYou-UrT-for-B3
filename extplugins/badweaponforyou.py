@@ -1,7 +1,7 @@
 # BadWeaponForYou Plugin b3 for Urban Terror
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.4'
+__version__ = '1.5'
 
 import b3, threading, thread, re
 import b3.events
@@ -17,7 +17,10 @@ def lgear(sgear):
         nsgear="Beretta 92G"
     if sgear=="de":
         rgear="G"
-        nsgear="Desert Eagle"    
+        nsgear="Desert Eagle" 
+    if sgear=="f":
+        rgear="glock"
+        nsgear="Glock 18"
     if sgear=="spas":
         rgear="H"
         nsgear="SPAS-12"
@@ -113,6 +116,16 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         self.registerEvent(b3.events.EVT_GAME_ROUND_START)
         self.registerEvent(b3.events.EVT_GAME_MAP_CHANGE)
 
+        self.gamename = self.console.game.gameName
+
+        if self.gamename == 'iourt41':
+
+            self.gmessage = 'gear[beretta|de|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
+
+        if self.gamename == 'iourt42':
+
+            self.gmessage = 'gear[beretta|de|glock|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
+
     def onLoadConfig(self):
 
         try:
@@ -169,7 +182,6 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
     def cmd_bwfy(self, data, client, cmd=None):
         """\
         <playername> <on or off> <gear> - prohibits or not a player from using an equipment
-        gear[beretta|de|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]
         """
         
         if data:
@@ -211,10 +223,10 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             client.message('!bwfy <playername> <on or off> <gear>')
             return False
         
-        if not sgear in ('beretta', 'de', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if not sgear in ('beretta', 'de', 'glock', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
      
             client.message('!bwfy <playername> <on or off> <gear>')
-            client.message('gear[beretta|de|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]')
+            client.message('%s'%self.gmessage)
             return False
         
         if sclient:
@@ -286,6 +298,8 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             for i in xrange(7):
                 if sclient.gear[a:b]=="F":
                     saysgear='Beretta 92G'
+                if sclient.gear[a:b]=="f":
+                    saysgear='Glock 18'
                 if sclient.gear[a:b]=="G":
                     saysgear='Desert Eagle'
                 if sclient.gear[a:b]=="H":
@@ -428,15 +442,15 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         
         else:
             client.message('!whogear <gear>')
-            client.message('gear[beretta|de|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]')
+            client.message('%s'%self.gmessage)
             return
         
         sgear = input[0]
         
-        if not sgear in ('beretta', 'de', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if not sgear in ('beretta', 'de', 'glock', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
      
             client.message('!whogear <gear>')
-            client.message('gear[beretta|de|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]')
+            client.message('%s'%self.gmessage)
             return False
                
         if (sgear):
