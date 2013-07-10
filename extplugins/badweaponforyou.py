@@ -1,7 +1,7 @@
 # BadWeaponForYou Plugin b3 for Urban Terror
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.5.1'
+__version__ = '1.5.2'
 
 import b3, threading, thread, re
 import b3.events
@@ -84,6 +84,12 @@ def lgear(sgear):
     if sgear=="xtra":
         rgear="X"
         nsgear="Extra Ammo"
+    if sgear=="colt":
+        rgear="g"
+        nsgear="Colt1911"
+    if sgear=="mac11":
+        rgear="h"
+        nsgear="Ingram Mac11"
 
     return rgear, nsgear
 
@@ -127,7 +133,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
 
         if self.gamename == 'iourt42':
 
-            self.gmessage = 'gear[beretta|de|glock|spas|mp5|ump|hk|lr300|g36|psg1|sr8|ak|negev|he|flash|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
+            self.gmessage = 'gear[beretta|de|glock|colt|spas|mp5|ump|mac11|hk|lr300|g36|psg1|sr8|ak|negev|he|flash|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
 
     def onLoadConfig(self):
 
@@ -226,7 +232,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             client.message('!bwfy <playername> <on or off> <gear>')
             return False
         
-        if not sgear in ('beretta', 'de', 'glock', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if not sgear in ('beretta', 'de', 'glock', 'colt', 'mac11', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
      
             client.message('!bwfy <playername> <on or off> <gear>')
             client.message('%s'%self.gmessage)
@@ -347,6 +353,10 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
                     saysgear='TacGoggles'
                 if sclient.gear[a:b]=="X":
                     saysgear='Extra Anno'
+                if sclient.gear[a:b]=="g":
+                    saysgear='Colt1911'
+                if sclient.gear[a:b]=="h":
+                    saysgear='Ingram Mac11'
                 if sclient.gear[a:b]=="A":
                     saysgear=''
                 if saysgear!='':
@@ -452,7 +462,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         
         sgear = input[0]
         
-        if not sgear in ('beretta', 'de', 'glock', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if not sgear in ('beretta', 'de', 'glock', 'colt', 'mac11', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
      
             client.message('!whogear <gear>')
             client.message('%s'%self.gmessage)
