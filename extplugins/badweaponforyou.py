@@ -1,108 +1,95 @@
-# BadWeaponForYou Plugin b3 for Urban Terror
+# -*- coding: utf-8 -*-
+#
+# BadWeaponForYou for UrbanTerror plugin for BigBrotherBot(B3) (www.bigbrotherbot.net)
 
 __author__  = 'PtitBigorneau www.ptitbigorneau.fr'
-__version__ = '1.5.2'
+__version__ = '1.5.3'
 
 import b3, threading, thread, re
 import b3.events
 import b3.plugin
 
-def lgear(sgear):
-
-    if sgear=="none":
-        rgear="A"
-        nsgear="None"
-    if sgear=="beretta":
-        rgear="F"
-        nsgear="Beretta 92G"
-    if sgear=="de":
-        rgear="G"
-        nsgear="Desert Eagle" 
-    if sgear=="f":
-        rgear="glock"
-        nsgear="Glock 18"
-    if sgear=="spas":
-        rgear="H"
-        nsgear="SPAS-12"
-    if sgear=="mp5":
-        rgear="I"
-        nsgear="MP5K"
-    if sgear=="ump":
-        rgear="J" 
-        nsgear="UMP45"                
-    if sgear=="hk":
-        rgear="K"
-        nsgear="HK69"
-    if sgear=="lr300":
-        rgear="L"
-        nsgear="LR300ML"                
-    if sgear=="g36":
-        rgear="M"
-        nsgear="G36"
-    if sgear=="psg1":
-        rgear="N"
-        nsgear="PSG-1"
-    if sgear=="sr8":
-        rgear="Z"
-        nsgear="SR-8"
-    if sgear=="ak":
-        rgear="a"
-        nsgear="AK-103"
-    if sgear=="negev":
-        rgear="c"
-        nsgear="Negev"
-    if sgear=="m4":
-        rgear="e"
-        nsgear="M4A1"
-    if sgear=="he":
-        rgear="O"
-        nsgear="HE Grenade"
-    if sgear=="flash":
-        rgear="P"
-        nsgear="Flash Grenade"
-    if sgear=="smoke":
-        rgear="Q"
-        nsgear="HE Smoke"
-    if sgear=="kevlar":
-        rgear="R"
-        nsgear="Kevlar Vest"
-    if sgear=="helmet":
-        rgear="W"
-        nsgear="Kevlar Helmet"
-    if sgear=="silencer":
-        rgear="U"
-        nsgear="Silencer"
-    if sgear=="laser":
-        rgear="V"
-        nsgear="Laser Sight"
-    if sgear=="medkit":
-        rgear="T"
-        nsgear="MedKit"
-    if sgear=="tac":
-        rgear="S"
-        nsgear="TacGoggles"
-    if sgear=="xtra":
-        rgear="X"
-        nsgear="Extra Ammo"
-    if sgear=="colt":
-        rgear="g"
-        nsgear="Colt1911"
-    if sgear=="mac11":
-        rgear="h"
-        nsgear="Ingram Mac11"
-
-    return rgear, nsgear
-
 class BadweaponforyouPlugin(b3.plugin.Plugin):
 
     _adminPlugin = None
-    _listplayersgear = []
+
     _bwfyminlevel = 60
     _glminlevel = 20
     _lbwfyminlevel = 20
     _mlbwfyminlevel = 1
     _protectlevel = 20
     _wgminlevel = 20
+
+    _listplayersgear = {}
+    _saysgear = {
+        'F':'Beretta 92G',
+        'f':'Glock 18',
+        'G':'Desert Eagle',
+        'H':'SPAS-12',
+        'I':'MP5K',
+        'J':'UMP45',
+        'K':'HK69',
+        'L':'LR300ML',
+        'M':'G36',
+        'N':'PSG-1',
+        'Z':'SR-8',
+        'a':'AK-103',
+        'c':'Negev',
+        'e':'M4A1',
+        'O':'HE Grenade',
+        'P':'Flash Grenade',
+        'Q':'HE Smoke',
+        'R':'Kevlar Vest',
+        'W':'Kevlar Helmet',
+        'U':'Silencer',
+        'V':'Laser Sight',
+        'T':'MedKit',
+        'S':'TacGoggles',
+        'X':'Extra Anno',
+        'g':'Colt1911',
+        'h':'Ingram Mac11',
+        'i':'FR-F1',
+        'j':'Benelli M4 Super 90',
+        'k':'FN Herstal P90',
+        'l':'.44 Magnum',
+        'A':''
+    }
+
+    _lgear = {    
+        "none":["A", "None"],
+        "beretta":["F", "Beretta 92G"],
+        "de":["G", "Desert Eagle"],
+        "glock":["f", "Glock 18"],
+        "spas":["H", "SPAS-12"],
+        "mp5":["I", "MP5K"],
+        "ump":["J" "UMP45"],               
+        "hk":["K", "HK69"],
+        "lr300":["L", "LR300ML"],               
+        "g36":["M", "G36"],
+        "psg1":["N", "PSG-1"],
+        "sr8":["Z", "SR-8"],
+        "ak":["a", "AK-103"],
+        "negev":["c", "Negev"],
+        "m4":["e", "M4A1"],
+        "he":["O", "HE Grenade"],
+        "flash":["P", "Flash Grenade"],
+        "smoke":["Q", "HE Smoke"],
+        "kevlar":["R", "Kevlar Vest"],
+        "helmet":["W", "Kevlar Helmet"],
+        "silencer":["U", "Silencer"],
+        "laser":["V", "Laser Sight"],
+        "medkit":["T", "MedKit"],
+        "tac":["S", "TacGoggles"],
+        "xtra":["X", "Extra Ammo"],
+        "colt":["g", "Colt1911"],
+        "mac11":["h", "Ingram Mac11"],
+        "frf1":["i", "FR-F1"],
+        "benelli":["j", "Benelli M4 Super 90"],
+        "fnp90":["k", "FN Herstal P90"],
+        "magnum":["l", ".44 Magnum"]
+    }
+    
+    _gears = ('beretta', 'de', 'glock', 'colt', 'mac11', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra') 
 
     def onStartup(self):
 
@@ -133,7 +120,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
 
         if self.gamename == 'iourt42':
 
-            self.gmessage = 'gear[beretta|de|glock|colt|spas|mp5|ump|mac11|hk|lr300|g36|psg1|sr8|ak|negev|he|flash|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
+            self.gmessage = 'gear[beretta|de|glock|colt|spas|mp5|ump|mac11|hk|lr300|g36|psg1|sr8|ak|negev|he|smoke|kevlar|helmet|silencer|laser|medkit|tag|xtra]'
 
     def onLoadConfig(self):
 
@@ -170,23 +157,35 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         
         if event.type == b3.events.EVT_GAME_MAP_CHANGE :
             
-            self._listplayersgear = [] 
+            self._listplayersgear = {}
         
         if (event.type == b3.events.EVT_CLIENT_TEAM_CHANGE) or (event.type == b3.events.EVT_CLIENT_GEAR_CHANGE) or (event.type == b3.events.EVT_CLIENT_NAME_CHANGE):
                 
-                client = event.client
-                fclient = client.guid
+            client = event.client
+            fclient = client.id
+            test = 0
+            listgears = None
                 
-                for x in self._listplayersgear:
+            if fclient in self._listplayersgear:
                     
-                    if fclient in x:
-                        elligne=x.split(' ')
-                        babclientgear= elligne[1]
-          
+                listbabclientgears = self._listplayersgear[fclient]
+    
+                for babclientgear in listbabclientgears:
+
                         if babclientgear in client.gear:
-                            if client.team in (2, 3):
-                                self.console.write('forceteam %s %s' %(client.cid, 's'))
-                                client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(client.exactName, elligne[2]))
+                        
+                            test = test + 1
+    
+                            if test == 1:
+                                listgears = self._saysgear[babclientgear]
+                            else:
+                                listgears = listgears + ", " + self._saysgear[babclientgear]
+                            
+            if test != 0:                                            
+                            
+                if client.team in (2, 3):
+                    self.console.write('forceteam %s %s' %(client.cid, 's'))
+                    client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(client.exactName, listgears))
             
     def cmd_bwfy(self, data, client, cmd=None):
         """\
@@ -232,7 +231,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             client.message('!bwfy <playername> <on or off> <gear>')
             return False
         
-        if not sgear in ('beretta', 'de', 'glock', 'colt', 'mac11', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if sgear not in self._gears:
      
             client.message('!bwfy <playername> <on or off> <gear>')
             client.message('%s'%self.gmessage)
@@ -242,44 +241,58 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         
             self._map=self.console.game.mapName
             
-            rlgear = lgear(sgear)
+            rlgear = self._lgear[sgear]
             rgear = rlgear[0]
             ngear = rlgear[1]     
                
-            self.console.say('^3For %s ^7-%s-^3 : %s'%(sclient.exactName, ngear, sayonoff))    
-            sguid=sclient.guid
+            sid=sclient.id
                             
             if onoff=="off":
 
-                try:
+                if rgear in sclient.gear:
 
-                    if rgear in sclient.gear:
-                        self.console.write('forceteam %s %s' %(sclient.cid, 's'))
-                
-                        sclient.message('^3%s %s %s'%(sclient.exactName, ngear, sayonoff))
-
-                except:
+                    self.console.write('forceteam %s %s' %(sclient.cid, 's'))
                 
                     sclient.message('^3%s %s %s'%(sclient.exactName, ngear, sayonoff))
-
-                chaine = sguid + " " + rgear + " " + ngear
-
-                for x in self._listplayersgear:
-                    if chaine in x:
+                   
+                if sid in self._listplayersgear:
+                
+                    if rgear in self._listplayersgear[sid]:
+                    
                         client.message('^3For %s ^7-%s-^3 is already %s'%(sclient.exactName, ngear , sayonoff))
-                        return False
+                
+                    else:
+                    
+                        self.console.say('^3For %s ^7-%s-^3 : %s'%(sclient.exactName, ngear, sayonoff))
+                        self._listplayersgear[sid].append("%s"%rgear)
 
-                self._listplayersgear.append('%s %s %s'%(sguid, rgear, ngear)) 
+                else:
+
+                    self._listplayersgear.update({sid:[rgear]})                
                                 
             if onoff=="on":
 
-                sclient.message('^3%s %s %s'%(sclient.exactName, ngear, sayonoff))
-                chaineoff = sguid + " " + rgear + " " + ngear
+                if sid in self._listplayersgear:
                 
-                for x in self._listplayersgear:
-                    if chaineoff in x:
-                        self._listplayersgear.remove(x)
+                    if rgear in self._listplayersgear[sid]:
+    
+                        self._listplayersgear[sid].remove(rgear)
+                        sclient.message('^3Now %s: %s ^3again'%(ngear, sayonoff))
+                        client.message('^3%s %s %s'%(sclient.exactName, ngear, sayonoff))
+                        
+                    else:
+
+                        client.message('^3For %s %s ^3was not ^1prohibited'%(sclient.exactName, ngear))
+ 
+
+                    if len(self._listplayersgear[sid]) == 0:
+
+                        del self._listplayersgear[sid]
+ 
+                else:
                 
+                    client.message('^3%s ^2No Weapon or Gear ^1prohibited'%(sclient.exactName))
+                                    
         else:
             return False
 
@@ -305,62 +318,8 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             b=1
             
             for i in xrange(7):
-                if sclient.gear[a:b]=="F":
-                    saysgear='Beretta 92G'
-                if sclient.gear[a:b]=="f":
-                    saysgear='Glock 18'
-                if sclient.gear[a:b]=="G":
-                    saysgear='Desert Eagle'
-                if sclient.gear[a:b]=="H":
-                    saysgear='SPAS-12'
-                if sclient.gear[a:b]=="I":
-                    saysgear='MP5K'
-                if sclient.gear[a:b]=="J":
-                    saysgear='UMP45'
-                if sclient.gear[a:b]=="K":
-                    saysgear='HK69'
-                if sclient.gear[a:b]=="L":
-                    saysgear='LR300ML'
-                if sclient.gear[a:b]=="M":
-                    saysgear='G36'
-                if sclient.gear[a:b]=="N":
-                    saysgear='PSG-1'
-                if sclient.gear[a:b]=="Z":
-                    saysgear='SR-8'
-                if sclient.gear[a:b]=="a":
-                    saysgear='AK-103'
-                if sclient.gear[a:b]=="c":
-                    saysgear='Negev'
-                if sclient.gear[a:b]=="e":
-                    saysgear='M4A1'
-                if sclient.gear[a:b]=="O":
-                    saysgear='HE Grenade'
-                if sclient.gear[a:b]=="P":
-                    saysgear='Flash Grenade'
-                if sclient.gear[a:b]=="Q":
-                    saysgear='HE Smoke'
-                if sclient.gear[a:b]=="R":
-                    saysgear='Kevlar Vest'
-                if sclient.gear[a:b]=="W":
-                    saysgear='Kevlar Helmet'
-                if sclient.gear[a:b]=="U":
-                    saysgear='Silencer'
-                if sclient.gear[a:b]=="V":
-                    saysgear='Laser Sight'
-                if sclient.gear[a:b]=="T":
-                    saysgear='MedKit'
-                if sclient.gear[a:b]=="S":
-                    saysgear='TacGoggles'
-                if sclient.gear[a:b]=="X":
-                    saysgear='Extra Anno'
-                if sclient.gear[a:b]=="g":
-                    saysgear='Colt1911'
-                if sclient.gear[a:b]=="h":
-                    saysgear='Ingram Mac11'
-                if sclient.gear[a:b]=="A":
-                    saysgear=''
-                if saysgear!='':
-                    client.message('%s^3 weapon / gear : ^7-%s-' % (sclient.exactName, saysgear))            
+                if self._saysgear[sclient.gear[a:b]]!='':
+                    client.message('%s^3 weapon / gear : ^7-%s-' % (sclient.exactName, self._saysgear[sclient.gear[a:b]]))            
                 a=a+1
                 b=b+1
                 
@@ -389,43 +348,37 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
             return False
                
         if (lclient):
+        
             if lclient=="all":
-                test=''
-
+                
+                test = False
+                
                 for x in self._listplayersgear:
                     
-                    egear=x.split(' ')
-                    sguid = egear[0]
-                    cursor = self.console.storage.query("""
-                    SELECT *
-                    FROM clients n
-                    WHERE n.guid = '%s'       
-                    """ % (sguid))
-                    if cursor.rowcount != 0:
-                        sr = cursor.getRow()
-                        sdclient = sr['name']
-                        cursor.close()
-                    else:
-                        cursor.close()
+                    scid= '@'+str(x)
+                    sdclient = self._adminPlugin.findClientPrompt(scid, client)
+                        
+                    for gear in self._listplayersgear[x]:
                     
-                    client.message('^3Weapon /gear prohibited for ^2%s ^3: ^7-%s-'%(sdclient, egear[2]))
-                    test="ok"
+                        client.message('^3Weapon /gear prohibited for ^2%s ^3: ^7-%s-'%(sdclient.exactName, self._saysgear[gear]))
+                    
+                    test = True
 
-                if test=='':
+                if test == False:
+                
                     client.message('^3No Players in Weapon /gear prohibited list')
-            else:
-                test=''
-                fclient=lclient.guid
-
-                for x in self._listplayersgear:
                     
-                    if fclient in x:
-                        egear=x.split(' ')
-                        client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(lclient.exactName, egear[2]))
-                        test='ok'
-                       
-                if test=='': 
-                    client.message('%s ^3is not in Weapon /gear prohibited list'%(lclient.exactName))                   
+            else:
+        
+                try:
+
+                    for gear in self._listplayersgear[lclient.id]:
+                        client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(lclient.exactName, self._saysgear[gear]))
+  
+                except:
+                
+                    client.message('%s ^3is not in Weapon /gear prohibited list'%(lclient.exactName))                  
+        
         else:
             return False
     
@@ -434,19 +387,16 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         list of your weapons and equipments prohibited 
                 """
         
-        test=''
-        fclient=client.guid
+        try:
 
-        for x in self._listplayersgear:
-                    
-            if fclient in x:
-                egear=x.split(' ')
-                client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(client.exactName, egear[2]))
-                test='ok'
-                       
-        if test=='': 
+            for gear in self._listplayersgear[client.id]:
+                client.message('^3Weapon /gear prohibited for %s ^3: ^7-%s-'%(client.exactName, self._saysgear[gear]))
+  
+        except:
+                
             client.message('%s ^3is not in Weapon /gear prohibited list'%(client.exactName))
-    
+        
+
     def cmd_whogear(self, data, client, cmd=None):
         """\
         <gear> - list of players who have the weapon or gear specify
@@ -462,7 +412,7 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
         
         sgear = input[0]
         
-        if not sgear in ('beretta', 'de', 'glock', 'colt', 'mac11', 'spas', 'mp5', 'ump', 'hk', 'lr300', 'g36', 'psg1', 'sr8', 'ak', 'negev', 'm4', 'he', 'flash', 'smoke', 'kevlar', 'helmet', 'silencer', 'laser', 'medkit', 'tac', 'xtra'):
+        if not sgear in self._gears:
      
             client.message('!whogear <gear>')
             client.message('%s'%self.gmessage)
@@ -477,12 +427,13 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
 
     def dowhogear(self, client, sgear, cmd):
 
-        rlgear = lgear(sgear)
+        rlgear = self._lgear[sgear]
         rgear = rlgear[0]
         ngear = rlgear[1]  
 
         names = []
-        
+        test = 0        
+
         for c in self.console.clients.getClientsByLevel():
         
             sclient = self._adminPlugin.findClientPrompt(c.name, client)
@@ -496,5 +447,10 @@ class BadweaponforyouPlugin(b3.plugin.Plugin):
 
             if rgear in sclient.gear:
                 client.message('%s ^7team : %s ^7has ^2%s'%(sclient.exactName, steam, ngear))
+                test = 1
 
-        return true
+        if test == 0:
+            
+            client.message('no player with ^2%s'%(ngear))    
+
+        return
